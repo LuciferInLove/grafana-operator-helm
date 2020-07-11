@@ -1,0 +1,29 @@
+{{- if .Values.grafanaDataSource }}
+apiVersion: v1
+kind: List
+items:
+{{- range .Values.grafanaDataSource }}
+- apiVersion: integreatly.org/v1alpha1
+  kind: GrafanaDataSource
+  metadata:
+    name: {{ .name }}
+    labels:
+      app: {{ template "grafana-operator.name" $ }}
+      chart: {{ template "grafana-operator.chart" $ }}
+      release: {{ $.Release.Name }}
+  spec:
+    name: {{ .name }}.yaml
+    datasources:
+      - name: {{ .datasourceName }}
+        type: {{ .type }}
+        access: {{ .access }}
+      {{- if .urlTemplated }}
+        url: {{ tpl (.url) $ }}
+      {{- else }}
+        url: {{ .url }}
+      {{- end }}
+        isDefault: {{ .isDefault }}
+        version: {{ .version }}
+        editable: {{ .editable }}
+{{- end }}
+{{- end }}

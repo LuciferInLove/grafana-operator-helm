@@ -1,0 +1,281 @@
+## Deploy grafana-operator objects
+##
+operator:
+  ## Number of grafana-operator replicas desired
+  ##
+  replicas: 1
+
+  ## Grafana-operator image
+  ##
+  image:
+    repository: quay.io/integreatly/grafana-operator
+    tag: v3.4.0
+    pullPolicy: IfNotPresent
+
+  ## Operator flags that can be passed in the args section of the container in the deployment
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#operator-flags
+  ##
+  args: []
+  # - --grafana-image=grafana/grafana
+  # - --grafana-image-tag=7.0.5
+
+  ## Create CRDs. If you are using Helm version < 2.10 you will have to either create the CRDs first.
+  ## Helm v3+ will create the CRDs if those are not present already regardless of this value.
+  ## Use `--skip-crds` with `helm install` for Helm v3+ if you want to skip CRD creation.
+  ##
+  createCustomResources: false
+
+  podLabels: {}
+
+  podAnnotations: {}
+
+  ## SecurityContext of operator's pods
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  podSecurityContext: {}
+
+  ## Additional labels for the running operator pods in a labeled node
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: {}
+
+  ## Additonal labels for running operator pods in tained nodes
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
+  # - key: "key"
+  #   operator: "Equal"
+  #   value: "value"
+  #   effect: "NoSchedule"
+
+  ## Additonal labels for running operator pods with affinity properties
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  ##
+  affinity: {}
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchExpressions:
+    #       - key: app
+    #         operator: In
+    #         values:
+    #         - grafana-operator
+    #     topologyKey: kubernetes.io/hostname
+    #   - labelSelector:
+    #       matchExpressions:
+    #       - key: app
+    #         operator: In
+    #         values:
+    #         - grafana-operator
+    #     topologyKey: failure-domain.beta.kubernetes.io/zone
+
+  ## SecurityContext of operator's pods containers
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+
+  ## Operator's deployment container port
+  ##
+  containerPort: 8080
+
+  ## Namespace that grafana operator watches. If not defined, operator deployment namespace will be used.
+  ##
+  watchNamespace: ""
+
+  ## Operator's templates path inside container
+  ##
+  templatePath: /usr/local/bin/templates
+
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+
+  ## Create prometheus-operator ServiceMonitor object if enabled
+  ##
+  monitoring:
+    enabled: false
+    namespace: monitoring
+    interval: 15s
+    path: /metrics
+    port: http-metrics
+    relabelings: []
+
+## List of objects of Grafana type. Grafana operator installs grafana deployment for each item.
+## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#deploying-grafana
+##
+grafana:
+- name: grafana
+
+  ## Additional containers to add to the grafana pod
+  ##
+  containers: []
+
+  ## Secrets to be mounted as volume into the grafana deployment
+  ##
+  secrets: []
+
+  ## ConfigMaps to be mounted as volume into the grafana deployment
+  ##
+  configMaps: []
+
+  initResources: {}
+
+  resources: {}
+
+  logLevel: warn
+
+  ## Default admin user for grafana instance. Better to set via config
+  ##
+  adminUser: ""
+
+  ## Default admin user password for grafana instance. Better to set via config
+  ##
+  adminPassword: ""
+
+  basicAuth: true
+
+  disableLoginForm: false
+
+  disableSignoutMenu: false
+
+  anonymous: true
+
+  ## Create an Ingress resource
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-the-ingress-or-route
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress
+  ##
+  ingress:
+    enabled: false
+    path: ""
+    pathTemplated: false
+    hostname: ""
+    hostnameTemplated: false
+    annotations: {}
+    labels: {}
+    targetPort: ""
+
+  ## Grafana service
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-the-service
+  ##
+  service:
+    enabled: true
+    ports:
+    - name: grafana
+      port: 3000
+      protocol: TCP
+      targetPort: grafana-http
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+
+  ## Grafana client settings
+  ##
+  client:
+    preferService: true
+
+  ## Grafana's old dashboards backwards compatibility switches
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#compatibility-with-older-dashboard-formats
+  ##
+  compat: {}
+
+  serviceAccount:
+    annotations: {}
+    labels: {}
+
+  ## Grafana deployment
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-the-deployment
+  ##
+  deployment:
+    ## Grafana instance's replicas
+    replicas: 1
+
+    terminationGracePeriodSeconds: ""
+
+    nodeSelector: {}
+
+    tolerations: []
+
+    affinity: {}
+
+    securityContext:
+      runAsUser: 472
+      runAsGroup: 472
+
+    containerSecurityContext:
+      runAsUser: 472
+      runAsGroup: 472
+
+  ## Use go templates in grafana instance's config
+  ##
+  configTemplated: false
+
+  ## Grafana instance's config
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#config-reconciliation
+  ##
+  config:
+    server:
+      protocol: "http"
+      serve_from_sub_path: True
+    security:
+      admin_user: "admin"
+      admin_password: "admin"
+      login_remember_days: 365
+    log:
+      mode: "console"
+      level: "warn"
+    users:
+      allow_sign_up: False
+    auth.basic:
+      enabled: True
+
+  ## Label selector or match expressions for grafana dashboards
+  ##
+  dashboardLabelSelector:
+    - matchExpressions:
+      - {key: app, operator: In, values: [grafana-operator]}
+
+  ## Namespace selector for grafana dashboards
+  ##
+  dashboardNamespaceSelector: {}
+
+  ## When not using an external database, Grafana creates a SQLite database.
+  ## By default, the location of this database is ephemeral but can be configured
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-data-storage
+  ##
+  dataStorage:
+    enabled: false
+    annotations: {}
+    labels: {}
+    accessModes: []
+    size: ""
+    class: ""
+
+## Create GrafanaDataSource objects
+## ref: https://github.com/integr8ly/grafana-operator#grafanadatasource
+##
+grafanaDataSource: []
+# - name: prometheus
+#   datasourceName: Prometheus
+#   type: prometheus
+#   access: proxy
+#   url: http://prometheus-operator-prometheus.monitoring.svc:9090
+#   urlTemplated: false
+#   isDefault: true
+#   version: 1
+#   editable: false
+
+## Create GrafanaDashboard objects
+## ref: https://github.com/integr8ly/grafana-operator#grafanadashboard
+##
+grafanaDashboard: []
+# - name: dashboard
+#   jsonTemplated: false
+#   json: >
+#     --- Dashboard json here ---
+#   url: ""
+#   datasources: []
+#   plugins: []
+#   configMapRef: {}

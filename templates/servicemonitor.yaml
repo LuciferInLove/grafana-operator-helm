@@ -1,0 +1,28 @@
+{{- if .Values.operator.monitoring.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "grafana-operator.fullname" . }}
+  {{- if .Values.operator.monitoring.namespace }}
+  namespace: {{ .Values.operator.monitoring.namespace }}
+  {{- end }}
+  labels:
+    app: {{ template "grafana-operator.name" . }}
+    chart: {{ template "grafana-operator.chart" . }}
+    release: {{ .Release.Name }}
+spec:
+  endpoints:
+  - interval: {{ .Values.operator.monitoring.interval }}
+    path: {{ .Values.operator.monitoring.path }}
+    port: {{ .Values.operator.monitoring.port }}
+    {{- with .Values.operator.monitoring.relabelings }}
+    relabelings:
+      {{ toYaml . | nindent 6 }}
+    {{- end }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      name: grafana-operator
+{{- end }}

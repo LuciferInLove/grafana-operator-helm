@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "grafana-operator.fullname" . }}
+  labels:
+    app: {{ template "grafana-operator.name" . }}
+    chart: {{ template "grafana-operator.chart" . }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.operator.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ template "grafana-operator.name" . }}
+      chart: {{ template "grafana-operator.chart" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        name: grafana-operator
+        app: {{ template "grafana-operator.name" . }}
+        chart: {{ template "grafana-operator.chart" . }}
+        release: {{ .Release.Name }}
+        {{- if .Values.operator.podLabels }}
+        {{ toYaml .Values.operator.podLabels | nindent 8 }}
+        {{- end }}
+      {{- if .Values.operator.podAnnotations }}
+      annotations:
+        {{ toYaml .Values.operator.podAnnotations | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "grafana-operator.serviceAccountName" . }}
+      {{- if .Values.operator.podSecurityContext }}
+      securityContext:
+        {{ toYaml .Values.operator.podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- with .Values.operator.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.operator.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.operator.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: grafana-operator
+          image: "{{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}"
+          imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+          command:
+          - grafana-operator
+          {{- if .Values.operator.args }}
+          args:
+          {{- range .Values.operator.args }}
+          - {{ . }}
+          {{- end }}
+          {{- end }}
+          ports:
+          - containerPort: {{ .Values.operator.containerPort }}
+            name: metrics
+          env:
+            - name: TEMPLATE_PATH
+              value: {{ .Values.operator.templatePath }}
+            - name: WATCH_NAMESPACE
+              {{- if .Values.operator.watchNamespace }}
+              value: {{ .Values.operator.watchNamespace }}
+              {{- else }}
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+              {{- end }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "grafana-operator"
+          {{- if .Values.operator.containerSecurityContext }}
+          securityContext:
+            {{ toYaml .Values.operator.containerSecurityContext | nindent 12 }}
+          {{- end }}

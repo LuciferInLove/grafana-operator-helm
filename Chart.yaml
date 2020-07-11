@@ -1,0 +1,15 @@
+apiVersion: v1
+name: grafana-operator
+version: 0.0.1
+appVersion: 3.4.0
+kubeVersion: "^1.8.0-0"
+description: A Kubernetes Operator based on the Operator SDK for creating and managing Grafana instances.
+home: https://github.com/integr8ly/grafana-operator
+icon: https://raw.githubusercontent.com/grafana/grafana/master/public/img/logo_transparent_400x.png
+sources:
+  - https://github.com/integr8ly/grafana-operator
+maintainers:
+  - name: LuciferInLove
+    email: lucifer.in.love@ya.ru
+engine: gotpl
+tillerVersion: ">=2.12.0"
