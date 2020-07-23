@@ -1,0 +1,20 @@
+{{- if .Values.additionalConfigmaps }}
+apiVersion: v1
+kind: List
+items:
+{{- range .Values.additionalConfigmaps }}
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: {{ .name }}
+    labels:
+      app: {{ template "grafana-operator.name" $ }}
+      chart: {{ template "grafana-operator.chart" $ }}
+      release: {{ $.Release.Name }}
+  data:
+  {{- range $key, $value := .data }}
+    {{ $key }}: |
+      {{ toYaml $value | nindent 6 }}
+  {{- end -}}
+{{- end }}
+{{- end }}

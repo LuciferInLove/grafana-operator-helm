@@ -21,6 +21,7 @@ helm install grafana-operator ./ --namespace grafana
 | operator.image.pullPolicy | string | `IfNotPresent` | Grafana operator image pull policy. |
 | operator.createCustomResources | bool | `false` | Create CRDs. If you are using Helm version < 2.10 you will have to either create the CRDs first. Helm v3+ will create the CRDs if those are not present already regardless of this value. Use `--skip-crds` with `helm install` for Helm v3+ if you want to skip CRD creation. |
 | operator.args | list | `[]` | Arguments that can be passed to the grafana operator command. |
+| operator.deploymentStrategy | object | `{"type": "Recreate"}` | Operator deployment strategy. |
 | operator.podLabels | object | `{}` | Operator pod labels. |
 | operator.podAnnotations | object | `{}` | Operator pod annotations. |
 | operator.podSecurityContext | object | `{}` | Operator pod security context. |
@@ -61,6 +62,9 @@ helm install grafana-operator ./ --namespace grafana
 | grafana[0].ingress.annotations | object | `{}` | Grafana instance's ingress annotations. |
 | grafana[0].ingress.labels | object | `{}` | Grafana instance's ingress labels. |
 | grafana[0].ingress.targetPort | string | `""` | Target port of grafana instance's ingress. |
+| grafana[0].ingress.tlsEnabled | bool | `false` | Enables or disables tls for the ingress. |
+| grafana[0].ingress.tlsSecretName | string | `""` | Name of the ingress certificate secret. |
+| grafana[0].ingress.termination | string | `""` | Used in Openshift, dictates where the secure communication will stop. |
 | grafana[0].service.enabled | bool | `true` | Defines if grafana instance's service is enabled. |
 | grafana[0].service.ports | list | `[{"name": "grafana", "port": 3000, "protocol": "TCP", "targetPort": "grafana-http"}]` | Grafana instance's service ports. |
 | grafana[0].service.annotations | object | `{}` | Grafana instance's service annotations. |

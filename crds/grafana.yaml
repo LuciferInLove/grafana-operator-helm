@@ -88,6 +88,15 @@ spec:
                 targetPort:
                   type: string
                   description: Override port to target in the grafana service
+                tlsEnabled:
+                  type: boolean
+                  description: Use tls for the ingress / route
+                tlsSecretName:
+                  type: string
+                  description: Name of the ingress certificate secret
+                termination:
+                  type: string
+                  description: Used in Openshift, dictates where the secure communication will stop
             service:
               type: object
               properties:

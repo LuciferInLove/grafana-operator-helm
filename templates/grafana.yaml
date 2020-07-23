@@ -78,6 +78,13 @@ items:
       {{- if .ingress.targetPort }}
       targetPort: {{ .ingress.targetPort }}
       {{- end }}
+      tlsEnabled: {{ .ingress.tlsEnabled }}
+      {{- if .ingress.tlsSecretName }}
+      tlsSecretName: {{ .ingress.tlsSecretName }}
+      {{- end }}
+      {{- if .ingress.termination }}
+      termination: {{ .ingress.termination }}
+      {{- end }}
     {{- if .service.enabled }}
     service:
     {{- with .service.ports }}
