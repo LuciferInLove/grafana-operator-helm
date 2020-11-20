@@ -9,7 +9,7 @@ operator:
   ##
   image:
     repository: quay.io/integreatly/grafana-operator
-    tag: v3.5.0
+    tag: v3.6.0
     pullPolicy: IfNotPresent
 
   ## Operator flags that can be passed in the args section of the container in the deployment
@@ -17,7 +17,7 @@ operator:
   ##
   args: []
   # - --grafana-image=grafana/grafana
-  # - --grafana-image-tag=7.0.5
+  # - --grafana-image-tag=7.1.1
 
   ## Operator deployment strategy
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
@@ -115,6 +115,11 @@ operator:
 grafana:
 - name: grafana
 
+  ## Custom grafana image for the grafana deployment
+  ## Warning! This overwrites the --grafana-image operator flag in .Values.operator.args.
+  ##
+  baseImage: ""
+
   ## Additional containers to add to the grafana pod
   ##
   containers: []
@@ -193,6 +198,7 @@ grafana:
   serviceAccount:
     annotations: {}
     labels: {}
+    imagePullSecrets: []
 
   ## Grafana deployment
   ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-the-deployment
@@ -262,16 +268,31 @@ grafana:
     size: ""
     class: ""
 
+  ## Label selector for jsonnet libraries
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#jsonnet-library-discovery
+  ##
+  jsonnet: {}
+
 ## Create GrafanaDataSource objects
 ## ref: https://github.com/integr8ly/grafana-operator#grafanadatasource
+## ref: https://grafana.com/docs/grafana/latest/administration/provisioning/
 ##
 grafanaDataSource: []
 # - name: prometheus
 #   datasourceName: Prometheus
 #   type: prometheus
 #   access: proxy
+#   orgId: 1
+#   # uid:
+#   # user:
+#   # database:
+#   # basicAuth:
+#   # basicAuthUser:
+#   # withCredentials:
 #   url: http://prometheus-operator-prometheus.monitoring.svc:9090
 #   urlTemplated: false
+#   # jsonData:
+#   # secureJsonData:
 #   isDefault: true
 #   version: 1
 #   editable: false
@@ -283,8 +304,12 @@ grafanaDashboard: []
 # - name: dashboard
 #   jsonTemplated: false
 #   json: >
+#   {{` # Use this escaping if you don't want to use helm templating in a dashboard json
 #     --- Dashboard json here ---
+#   `}} # Use this escaping if you don't want to use helm templating in a dashboard json
+#   # jsonnet:
 #   url: ""
+#   customFolderName: ""
 #   datasources: []
 #   plugins: []
 #   configMapRef: {}

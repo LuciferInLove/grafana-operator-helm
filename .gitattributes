@@ -1,0 +1,10 @@
+*.tpl      linguist-language=Go
+*.gotmpl   linguist-language=Go
+
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.tif      binary
+*.tiff     binary
+*.ico      binary

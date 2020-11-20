@@ -19,8 +19,10 @@ spec:
   validation:
     openAPIV3Schema:
       required: ["spec"]
+      type: object
       properties:
         spec:
+          type: object
           properties:
             containers:
               type: array
@@ -127,7 +129,7 @@ spec:
                 replicas:
                   type: integer
                   description: Grafana replicas
-                nodeSelector: 
+                nodeSelector:
                   type: object
                   description: Additional labels for the running grafana pods in a labeled node
                 tolerations:
@@ -154,6 +156,9 @@ spec:
                 labels:
                   type: object
                   description: Additional labels for the serviceaccount
+                imagePullSecrets:
+                  type: array
+                  description: Additional image pull secrets for the serviceaccount
             client:
               type: object
               description: Grafana client settings
@@ -188,3 +193,9 @@ spec:
                 class:
                   type: string
                   description: Persistent volume storage class
+            jsonnet:
+              type: object
+              description: Jsonnet library configuration
+            baseImage:
+              type: string
+              description: Override base image

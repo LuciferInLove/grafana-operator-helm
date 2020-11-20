@@ -42,6 +42,7 @@ helm install grafana-operator ./ --namespace grafana
 | operator.monitoring.port | string | `http-metrics` | Operator's metrics service port. |
 | operator.monitoring.relabelings | list | `[]` | ServiceMonitor endpoint relabelings. |
 | grafana[0].name | string | `grafana` | Name of Grafana instance. |
+| grafana[0].baseImage | string | `""` | Custom grafana image for the grafana deployment. Warning! This overwrites the `--grafana-image` operator flag. |
 | grafana[0].containers | list | `[]` | Additional containers to add to the grafana pod. |
 | grafana[0].secrets | list | `[]` | Secrets to be mounted as volume into the grafana deployment. |
 | grafana[0].configMaps | list | `[]` | ConfigMaps to be mounted as volume into the grafana deployment. |
@@ -74,6 +75,7 @@ helm install grafana-operator ./ --namespace grafana
 | grafana[0].compat | object | `{}` | Grafana's backwards compatibility switches. |
 | grafana[0].serviceAccount.annotations | object | `{}` | Additional annotations for ServiceAccount. |
 | grafana[0].serviceAccount.labels | object | `{}` | Additional labels for ServiceAccount. |
+| grafana[0].serviceAccount.imagePullSecrets | array | `[]` | Additional image pull secrets for ServiceAccount. |
 | grafana[0].deployment.replicas | int | `1` | Grafana instance's replicas. |
 | grafana[0].deployment.terminationGracePeriodSeconds | string | `""` | Grafana deployment termination grace period. |
 | grafana[0].deployment.nodeSelector | object | `{}` | Labels of nodes on which grafana pods are scheduled on. |
@@ -91,5 +93,6 @@ helm install grafana-operator ./ --namespace grafana
 | grafana[0].dataStorage.accessModes | list | `[]` | List of the persistent volume access modes. |
 | grafana[0].dataStorage.size | string | `""` | Grafana instance's persistent volume size. |
 | grafana[0].dataStorage.class | string | `""` | Grafana instance's persistent volume storage class. |
+| grafana[0].jsonnet | object | `{}` | Label selector for jsonnet libraries. |
 | grafanaDataSource | list | `[]` | List of GrafanaDataSource objects. See an example in values.yaml. |
 | grafanaDashboard | list | `[]` | List of GrafanaDashboard objects. See an example in values.yaml. |

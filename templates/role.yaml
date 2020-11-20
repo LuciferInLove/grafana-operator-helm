@@ -3,9 +3,7 @@ kind: Role
 metadata:
   name: {{ template "grafana-operator.fullname" . }}
   labels:
-    app: {{ template "grafana-operator.name" . }}
-    chart: {{ template "grafana-operator.chart" . }}
-    release: {{ .Release.Name }}
+    {{- include "grafana-operator.labels" . | nindent 4 }}
 rules:
 - apiGroups:
     - ""

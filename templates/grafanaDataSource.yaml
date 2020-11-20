@@ -8,9 +8,7 @@ items:
   metadata:
     name: {{ .name }}
     labels:
-      app: {{ template "grafana-operator.name" $ }}
-      chart: {{ template "grafana-operator.chart" $ }}
-      release: {{ $.Release.Name }}
+      {{- include "grafana-operator.labels" $ | nindent 6 }}
   spec:
     name: {{ .name }}.yaml
     datasources:
@@ -20,7 +18,40 @@ items:
       {{- if .urlTemplated }}
         url: {{ tpl (.url) $ }}
       {{- else }}
-        url: {{ .url }}
+        url: {{ .url | quote }}
+      {{- end }}
+      {{- if .orgId }}
+        orgId: {{ .orgId }}
+      {{- end }}
+      {{- if .uid }}
+        uid: {{ .uid }}
+      {{- end }}
+      {{- if .database }}
+        database: {{ .database | quote }}
+      {{- end }}
+      {{- if .user }}
+        user: {{ .user | quote }}
+      {{- end }}
+      {{- if .basicAuth }}
+        basicAuth: {{ .basicAuth }}
+      {{- end }}
+      {{- if .basicAuthUser }}
+        basicAuthUser: {{ .basicAuthUser | quote }}
+      {{- end }}
+      {{- if .withCredentials }}
+        withCredentials: {{ .withCredentials }}
+      {{- end }}
+      {{- if .secureJsonData }}
+        {{- with .secureJsonData }}
+        secureJsonData:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+      {{- end }}
+      {{- if .jsonData }}
+        {{- with .jsonData }}
+        jsonData:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
       {{- end }}
         isDefault: {{ .isDefault }}
         version: {{ .version }}

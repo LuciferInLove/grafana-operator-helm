@@ -8,13 +8,8 @@ items:
   metadata:
     name: {{ .name }}
     labels:
-      app: {{ template "grafana-operator.name" $ }}
-      chart: {{ template "grafana-operator.chart" $ }}
-      release: {{ $.Release.Name }}
+      {{- include "grafana-operator.labels" $ | nindent 6 }}
   data:
-  {{- range $key, $value := .data }}
-    {{ $key }}: |
-      {{ toYaml $value | nindent 6 }}
-  {{- end -}}
+    {{- toYaml .data | nindent 4 }}
 {{- end }}
 {{- end }}

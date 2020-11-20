@@ -7,9 +7,7 @@ metadata:
   namespace: {{ .Values.operator.monitoring.namespace }}
   {{- end }}
   labels:
-    app: {{ template "grafana-operator.name" . }}
-    chart: {{ template "grafana-operator.chart" . }}
-    release: {{ .Release.Name }}
+    {{- include "grafana-operator.labels" . | nindent 4 }}
 spec:
   endpoints:
   - interval: {{ .Values.operator.monitoring.interval }}
@@ -17,7 +15,7 @@ spec:
     port: {{ .Values.operator.monitoring.port }}
     {{- with .Values.operator.monitoring.relabelings }}
     relabelings:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
   namespaceSelector:
     matchNames:

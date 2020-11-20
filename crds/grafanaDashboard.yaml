@@ -18,12 +18,17 @@ spec:
   version: v1alpha1
   validation:
     openAPIV3Schema:
+      type: object
       properties:
         spec:
+          type: object
           properties:
             name:
               type: string
             json:
+              type: string
+            jsonnet:
+              description: Jsonnet source. Has access to grafonnet.
               type: string
             url:
               type: string
@@ -41,3 +46,6 @@ spec:
             configMapRef:
               type: object
               description: Dashboards ConfigMap key selector
+            customFolderName:
+              description: Folder name that this dashboard will be assigned to.
+              type: string

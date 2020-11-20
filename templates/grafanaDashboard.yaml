@@ -8,31 +8,38 @@ items:
   metadata:
     name: {{ .name }}
     labels:
-      app: {{ template "grafana-operator.name" $ }}
-      chart: {{ template "grafana-operator.chart" $ }}
-      release: {{ $.Release.Name }}
+      {{- include "grafana-operator.labels" $ | nindent 6 }}
   spec:
     name: {{ .name }}.json
+    {{- if .json }}
     json:
     {{- if .jsonTemplated }}
-      {{ toYaml (tpl .json $) | nindent 6 }}
+      {{- toYaml (tpl .json $) | nindent 6 }}
     {{ else }}
-      {{ toYaml .json | nindent 6 }}
+      {{- toYaml .json | nindent 6 }}
+    {{- end }}
+    {{- end }}
+    {{- if .jsonnet }}
+    jsonnet:
+      {{- toYaml .jsonnet | nindent 6 }}
     {{- end }}
     {{- if .url }}
     url: {{ .url }}
     {{- end }}
     {{- with .datasources }}
     datasources:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- with .plugins }}
     plugins:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- with .configMapRef }}
     configMapRef:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- if .customFolderName }}
+    customFolderName: {{ .customFolderName }}
     {{- end }}
 {{- end }}
 {{- end }}

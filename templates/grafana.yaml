@@ -8,10 +8,11 @@ items:
   metadata:
     name: {{ .name }}
     labels:
-      app: {{ template "grafana-operator.name" $ }}
-      chart: {{ template "grafana-operator.chart" $ }}
-      release: {{ $.Release.Name }}
+      {{- include "grafana-operator.labels" $ | nindent 6 }}
   spec:
+    {{- if .baseImage }}
+    baseImage: {{ .baseImage }}
+    {{- end }}
     {{- if .containers }}
     containers:
     {{- range .containers }}
@@ -32,11 +33,11 @@ items:
     {{- end }}
     {{- with .initResources }}
     initResources:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- with .resources }}
     resources:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- if .logLevel }}
     logLevel: {{ .logLevel }}
@@ -69,11 +70,11 @@ items:
       {{- end }}
       {{- with .ingress.annotations }}
       annotations:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .ingress.labels }}
       labels:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .ingress.targetPort }}
       targetPort: {{ .ingress.targetPort }}
@@ -89,50 +90,54 @@ items:
     service:
     {{- with .service.ports }}
       ports:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .service.annotations }}
       annotations:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .service.labels }}
       labels:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
       type: {{ .service.type }}
     {{- end }}
     {{- with .client }}
     client:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- with .compat }}
     compat:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- if or .serviceAccount.annotations .serviceAccount.labels }}
     serviceAccount:
       {{- with .serviceAccount.annotations }}
       annotations:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .serviceAccount.labels }}
       labels:
         {{ toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .serviceAccount.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     {{- end }}
     config:
     {{- if .configTemplated }}
-      {{ tpl (toYaml .config) $ | nindent 6 }}
+      {{- tpl (toYaml .config) $ | nindent 6 }}
     {{- else }}
-      {{ toYaml .config | nindent 6 }}
+      {{- toYaml .config | nindent 6 }}
     {{- end }}
     {{- if .dashboardLabelSelector }}
     dashboardLabelSelector:
-      {{ toYaml .dashboardLabelSelector | nindent 6 }}
+      {{- toYaml .dashboardLabelSelector | nindent 6 }}
     {{- end }}
     {{- with .dashboardNamespaceSelector }}
     dashboardNamespaceSelector:
-      {{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     deployment:
       replicas: {{ .deployment.replicas }}
@@ -141,44 +146,48 @@ items:
     {{- end }}
     {{- with .deployment.nodeSelector }}
       nodeSelector:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .deployment.tolerations }}
       tolerations:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .deployment.affinity }}
       affinity:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- if .deployment.securityContext }}
     {{- with .deployment.securityContext }}
       securityContext:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- end }}
     {{- if .deployment.containerSecurityContext }}
     {{- with .deployment.containerSecurityContext }}
       containerSecurityContext:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- end }}
     {{- if .dataStorage.enabled }}
     dataStorage:
     {{- with .dataStorage.annotations }}
       annotations:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .dataStorage.labels }}
       labels:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .dataStorage.accessModes }}
       accessModes:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
       size: {{ .dataStorage.size }}
       class: {{ .dataStorage.class }}
+    {{- end }}
+    {{- with .jsonnet }}
+    jsonnet:
+      {{- toYaml . | nindent 6 }}
     {{- end }}
 {{- end }}
 {{- end }}

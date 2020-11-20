@@ -3,51 +3,45 @@ kind: Deployment
 metadata:
   name: {{ template "grafana-operator.fullname" . }}
   labels:
-    app: {{ template "grafana-operator.name" . }}
-    chart: {{ template "grafana-operator.chart" . }}
-    release: {{ .Release.Name }}
+    {{- include "grafana-operator.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.operator.replicas }}
 {{- with .Values.operator.deploymentStrategy }}
   strategy:
-  {{ toYaml . | nindent 4 }}
+  {{- toYaml . | nindent 4 }}
 {{- end }}
   selector:
     matchLabels:
-      app: {{ template "grafana-operator.name" . }}
-      chart: {{ template "grafana-operator.chart" . }}
-      release: {{ .Release.Name }}
+      {{- include "grafana-operator.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
         name: grafana-operator
-        app: {{ template "grafana-operator.name" . }}
-        chart: {{ template "grafana-operator.chart" . }}
-        release: {{ .Release.Name }}
+        {{- include "grafana-operator.selectorLabels" . | nindent 8 }}
         {{- if .Values.operator.podLabels }}
-        {{ toYaml .Values.operator.podLabels | nindent 8 }}
+        {{- toYaml .Values.operator.podLabels | nindent 8 }}
         {{- end }}
       {{- if .Values.operator.podAnnotations }}
       annotations:
-        {{ toYaml .Values.operator.podAnnotations | nindent 8 }}
+        {{- toYaml .Values.operator.podAnnotations | nindent 8 }}
       {{- end }}
     spec:
       serviceAccountName: {{ template "grafana-operator.serviceAccountName" . }}
       {{- if .Values.operator.podSecurityContext }}
       securityContext:
-        {{ toYaml .Values.operator.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.operator.podSecurityContext | nindent 8 }}
       {{- end }}
       {{- with .Values.operator.nodeSelector }}
       nodeSelector:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.operator.tolerations }}
       tolerations:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.operator.affinity }}
       affinity:
-        {{ toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: grafana-operator
@@ -83,5 +77,5 @@ spec:
               value: "grafana-operator"
           {{- if .Values.operator.containerSecurityContext }}
           securityContext:
-            {{ toYaml .Values.operator.containerSecurityContext | nindent 12 }}
+            {{- toYaml .Values.operator.containerSecurityContext | nindent 12 }}
           {{- end }}
