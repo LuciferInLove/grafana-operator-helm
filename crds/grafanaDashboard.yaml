@@ -23,8 +23,6 @@ spec:
         spec:
           type: object
           properties:
-            name:
-              type: string
             json:
               type: string
             jsonnet:

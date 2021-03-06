@@ -10,7 +10,6 @@ items:
     labels:
       {{- include "grafana-operator.labels" $ | nindent 6 }}
   spec:
-    name: {{ .name }}.json
     {{- if .json }}
     json:
     {{- if .jsonTemplated }}

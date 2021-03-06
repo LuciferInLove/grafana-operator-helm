@@ -13,6 +13,9 @@ items:
     {{- if .baseImage }}
     baseImage: {{ .baseImage }}
     {{- end }}
+    {{- if .initImage }}
+    initImage: {{ .initImage }}
+    {{- end }}
     {{- if .containers }}
     containers:
     {{- range .containers }}
@@ -88,19 +91,25 @@ items:
       {{- end }}
     {{- if .service.enabled }}
     service:
-    {{- with .service.ports }}
+      name: {{ .service.name }}
+      {{- with .service.ports }}
       ports:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .service.annotations }}
+      {{- end }}
+      {{- with .service.annotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .service.labels }}
+      {{- end }}
+      {{- with .service.labels }}
       labels:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
       type: {{ .service.type }}
+      {{- if eq .service.type "ClusterIP" }}
+      {{- if .service.clusterIP }}
+      clusterIP: {{ .service.clusterIP }}
+      {{- end }}
+      {{- end }}
     {{- end }}
     {{- with .client }}
     client:
@@ -110,8 +119,8 @@ items:
     compat:
       {{- toYaml . | nindent 6 }}
     {{- end }}
-    {{- if or .serviceAccount.annotations .serviceAccount.labels }}
     serviceAccount:
+      skip: {{ .serviceAccount.skip }}
       {{- with .serviceAccount.annotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
@@ -124,7 +133,6 @@ items:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- end }}
     config:
     {{- if .configTemplated }}
       {{- tpl (toYaml .config) $ | nindent 6 }}
@@ -187,6 +195,14 @@ items:
     {{- end }}
     {{- with .jsonnet }}
     jsonnet:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .livenessProbeSpec }}
+    livenessProbeSpec:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .readinessProbeSpec }}
+    readinessProbeSpec:
       {{- toYaml . | nindent 6 }}
     {{- end }}
 {{- end }}

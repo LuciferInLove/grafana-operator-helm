@@ -43,6 +43,7 @@ helm install grafana-operator ./ --namespace grafana
 | operator.monitoring.relabelings | list | `[]` | ServiceMonitor endpoint relabelings. |
 | grafana[0].name | string | `grafana` | Name of Grafana instance. |
 | grafana[0].baseImage | string | `""` | Custom grafana image for the grafana deployment. Warning! This overwrites the `--grafana-image` operator flag. |
+| grafana[0].initImage | string | `""` | Custom grafana plugins init image for the grafana deployment. Warning! This overwrites the `--grafana-plugins-init-container-image` operator flag. |
 | grafana[0].containers | list | `[]` | Additional containers to add to the grafana pod. |
 | grafana[0].secrets | list | `[]` | Secrets to be mounted as volume into the grafana deployment. |
 | grafana[0].configMaps | list | `[]` | ConfigMaps to be mounted as volume into the grafana deployment. |
@@ -67,12 +68,15 @@ helm install grafana-operator ./ --namespace grafana
 | grafana[0].ingress.tlsSecretName | string | `""` | Name of the ingress certificate secret. |
 | grafana[0].ingress.termination | string | `""` | Used in Openshift, dictates where the secure communication will stop. |
 | grafana[0].service.enabled | bool | `true` | Defines if grafana instance's service is enabled. |
+| grafana[0].service.name | string | `grafana-service` | Configurable name for the grafana's service. |
 | grafana[0].service.ports | list | `[{"name": "grafana", "port": 3000, "protocol": "TCP", "targetPort": "grafana-http"}]` | Grafana instance's service ports. |
 | grafana[0].service.annotations | object | `{}` | Grafana instance's service annotations. |
 | grafana[0].service.labels | object | `{}` | Grafana instance's service labels. |
 | grafana[0].service.type | string | `ClusterIP` | Grafana instance's service type. |
+| grafana[0].service.clusterIP | string | `""` | Specifies your own cluster IP address for the grafana's service. |
 | grafana[0].client | object | `{"preferService": true}` | Grafana client settings. |
 | grafana[0].compat | object | `{}` | Grafana's backwards compatibility switches. |
+| grafana[0].serviceAccount.skip | bool | `false` | Skips the grafana's ServiceAccount creation. |
 | grafana[0].serviceAccount.annotations | object | `{}` | Additional annotations for ServiceAccount. |
 | grafana[0].serviceAccount.labels | object | `{}` | Additional labels for ServiceAccount. |
 | grafana[0].serviceAccount.imagePullSecrets | array | `[]` | Additional image pull secrets for ServiceAccount. |
@@ -94,5 +98,7 @@ helm install grafana-operator ./ --namespace grafana
 | grafana[0].dataStorage.size | string | `""` | Grafana instance's persistent volume size. |
 | grafana[0].dataStorage.class | string | `""` | Grafana instance's persistent volume storage class. |
 | grafana[0].jsonnet | object | `{}` | Label selector for jsonnet libraries. |
+| grafana[0].livenessProbeSpec | object | `{}` | Liveness probe configuration for the grafana container. |
+| grafana[0].readinessProbeSpec | object | `{}` | Readiness probe configuration for the grafana container. |
 | grafanaDataSource | list | `[]` | List of GrafanaDataSource objects. See an example in values.yaml. |
 | grafanaDashboard | list | `[]` | List of GrafanaDashboard objects. See an example in values.yaml. |

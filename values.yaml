@@ -9,7 +9,7 @@ operator:
   ##
   image:
     repository: quay.io/integreatly/grafana-operator
-    tag: v3.6.0
+    tag: v3.9.0
     pullPolicy: IfNotPresent
 
   ## Operator flags that can be passed in the args section of the container in the deployment
@@ -120,6 +120,11 @@ grafana:
   ##
   baseImage: ""
 
+  ## Custom grafana plugins init image for the grafana deployment
+  ## Warning! This overwrites the --grafana-plugins-init-container-image operator flag in .Values.operator.args.
+  ##
+  initImage: ""
+
   ## Additional containers to add to the grafana pod
   ##
   containers: []
@@ -176,6 +181,7 @@ grafana:
   ##
   service:
     enabled: true
+    name: grafana-service
     ports:
     - name: grafana
       port: 3000
@@ -184,6 +190,7 @@ grafana:
     annotations: {}
     labels: {}
     type: ClusterIP
+    clusterIP: ""
 
   ## Grafana client settings
   ##
@@ -196,6 +203,7 @@ grafana:
   compat: {}
 
   serviceAccount:
+    skip: false
     annotations: {}
     labels: {}
     imagePullSecrets: []
@@ -272,6 +280,16 @@ grafana:
   ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#jsonnet-library-discovery
   ##
   jsonnet: {}
+
+  ## Defines the time, in seconds, to be used for each field in the liveness probe configuration
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-readinessliveness-probes
+  ##
+  livenessProbeSpec: {}
+
+  ## Defines the time, in seconds, to be used for each field in the readiness probe configuration
+  ## ref: https://github.com/integr8ly/grafana-operator/blob/master/documentation/deploy_grafana.md#configuring-readinessliveness-probes
+  ##
+  readinessProbeSpec: {}
 
 ## Create GrafanaDataSource objects
 ## ref: https://github.com/integr8ly/grafana-operator#grafanadatasource
